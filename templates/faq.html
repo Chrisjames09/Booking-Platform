@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="text-primary">FAQ Tab</h1>
+
+<div class="row">
+                                            {% if session.get('account_type') == 'admin' %}
+            <a href="{{ url_for('createfaq') }}" class="btn btn-warning">Create FAQ</a>
+    {% endif %}
+    {% for faq_id, faq in faqs.items() %}
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">{{ faq.question }}</h5>
+                <p class="card-text"><strong>Answer:</strong> {{ faq.answer }}</p>
+                <div class="button-container">
+                                        {% if session.get('account_type') == 'admin' %}
+<a href="{{ url_for('editfaq', faq_id=faq_id) }}"
+   class="btn btn-primary"
+   onclick="return confirmEdit();">
+   Edit
+</a>
+
+<script>
+function confirmEdit() {
+    return confirm("Are you sure you want to edit this FAQ?");
+}
+</script>
+                    <a href="{{ url_for('deletefaq', faq_id=faq.id) }}"
+   class="btn btn-danger"
+   onclick="return confirmDelete();">
+   Delete
+</a>
+
+<script>
+function confirmDelete() {
+    return confirm("Are you sure you want to delete this FAQ?");
+}
+</script>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

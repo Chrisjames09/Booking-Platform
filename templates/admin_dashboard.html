@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<script src="{{ url_for('static', filename='functions.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/profile.css') }}">
+
+<!-- Container for the page -->
+<div class="container">
+    <h1 class="display-4">Admin Dashboard</h1>
+
+    {% if session.get('account_type') == 'super' %}
+        <a href="{{ url_for('adm_signup') }}" class="btn btn-warning">Create Admin Account</a>
+    {% endif %}
+
+    <!-- Tabs for User and Admin Accounts -->
+    <ul class="nav nav-tabs" id="accountTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <a class="nav-link active" id="user-tab" data-bs-toggle="tab" href="#user-accounts" role="tab" aria-controls="user-accounts" aria-selected="true">User Accounts</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="admin-tab" data-bs-toggle="tab" href="#admin-accounts" role="tab" aria-controls="admin-accounts" aria-selected="false">Admin Accounts</a>
+        </li>
+    </ul>
+
+    <div class="tab-content mt-3" id="accountTabsContent">
+        <!-- User Accounts Tab -->
+        <div class="tab-pane fade show active" id="user-accounts" role="tabpanel" aria-labelledby="user-tab">
+            <div class="leave-form-container">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Email</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pt in pt_list %}
+                        <tr>
+                            <td>{{ pt.get_id() }}</td>
+                            <td>{{ pt.get_email() }}</td>
+                            <td>{{ pt.firstname }}</td>
+                            <td>{{ pt.lastname }}</td>
+                            <td>
+                                <a href="{{ url_for('update_profile', pt_id=pt.get_id()) }}" class="btn btn-warning btn-sm">Edit</a>
+
+                                {% if pt.type in ['user', 'admin'] %}
+                                <form action="{{ url_for('deactivate_user', id=pt.get_id()) }}" method="POST" style="display:inline;" onsubmit="return confirmDelete();">
+                                    <button type="submit" class="btn btn-danger btn-sm">Deactivate</button>
+                                </form>
+                                {% endif %}
+
+                                {% if pt.type == 'inactivePT' %}
+                                <form action="{{ url_for('reactivate_user', id=pt.get_id()) }}" method="POST" style="display:inline;" onsubmit="return undoDelete();">
+                                    <button type="submit" class="btn btn-success btn-sm">Reactivate</button>
+                                </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Admin Accounts Tab -->
+        <div class="tab-pane fade" id="admin-accounts" role="tabpanel" aria-labelledby="admin-tab">
+            <div class="leave-form-container">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Email</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ft in admin_list %}
+                        <tr>
+                            <td>{{ ft.get_id() }}</td>
+                            <td>{{ ft.get_email() }}</td>
+                            {% if session.get('account_type') == 'super' %}
+                            <td>
+                                {% if ft.type == 'admin' %}
+                                <form action="{{ url_for('deactivate_admin', id=ft.get_id()) }}" method="POST" style="display:inline;" onsubmit="return confirmDelete();">
+                                    <button type="submit" class="btn btn-danger btn-sm">Deactivate</button>
+                                </form>
+                                {% endif %}
+
+                                {% if ft.type == 'inactiveFT' %}
+                                <form action="{{ url_for('reactivate_admin', id=ft.get_id()) }}" method="POST" style="display:inline;" onsubmit="return undoDelete();">
+                                    <button type="submit" class="btn btn-success btn-sm">Reactivate</button>
+                                </form>
+                                {% endif %}
+                            </td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

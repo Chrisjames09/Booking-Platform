@@ -1,0 +1,133 @@
+<head>
+    <!-- Link to the CSS file -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/total_leave.css') }}">
+</head>
+
+{% extends 'base.html' %}
+{% block title %}Bao Shi - Apply Leave{% endblock %}
+
+{% block content %}
+<h3 class="mt-2 mr-2 text-center">Apply For Leave</h3>
+
+<div class="container mt-5">
+    <div class="leave-form-container mx-auto col-sm-7">
+        <!-- Job Details inside the same container -->
+        <div class="job_details card text-align-center">
+            <div class="card-body">
+                <h3>Job Details</h3>
+            <p class="fw-bold">{{ job.get_description() }}</p>
+            <p><b>Position</b>: {{ job.get_position() }}</p>
+            <p>Date: {{ job.get_date().strftime('%d/%m/%Y') }}</p>
+            <p>Duration: {{ job.get_start_time().strftime('%I:%M %p') }} - {{ job.get_end_time().strftime('%I:%M %p') }} ({{ job.calc_total_hrs() }})</p>
+            </div>
+        </div>
+
+        <!-- Form starts here -->
+        <form method="POST" enctype="multipart/form-data">
+            <div class="row mx-auto mb-3 mt-5 fs-5">
+                <!-- Date field -->
+                <div class="col-md-6">
+                    <label for="job_date" class="form-label">Date</label>
+                    <input class="form-control" id="job_date" name="job_date" value="{{ job.get_date().strftime('%d/%m/%Y') }}" readonly>
+                </div>
+
+                <!-- Absence Reason dropdown -->
+                <div class="col-md-6">
+                    <label for="reason" class="form-label">Absence Reason</label>
+                    <select class="form-select" id="reason" name="reason" required>
+                        <option value="" disabled selected>Select Reason</option>
+                        <option value="Medical Leave">Medical Leave</option>
+                        <option value="Child Medical Leave">Child Medical Leave</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-3 mt-2 fs-5">
+                <label for="remarks" class="form-label">Remarks</label>
+                <textarea class="form-control" id="remarks" name="remarks" rows="3"></textarea>
+            </div>
+            <div class="mb-3 mt-2 fs-5">
+                <label for="file_upload" class="form-label">File Upload</label>
+                <input type="file" class="form-control" id="file_upload" name="file_upload" accept=".pdf,.jpg,.jpeg,.png,.docx,.txt">
+            </div>
+
+            <!-- Submit Button triggers the modal -->
+            <div class="d-flex justify-content-center mb-4 mt-3">
+                <button type="button" class="btn btn-primary fs-5" data-bs-toggle="modal" data-bs-target="#confirmModal">
+                    Submit
+                </button>
+            </div>
+        </form>
+
+    <!-- Bootstrap Confirmation Modal -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalLabel">Confirm Submission</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to submit this leave request?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <!-- Submit button inside the modal -->
+                    <button type="submit" class="btn btn-primary" id="confirmSubmitBtn">Yes, Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- JavaScript to submit the form when the modal button is clicked -->
+<script>
+    document.getElementById("confirmSubmitBtn").addEventListener("click", function(event) {
+        let isValid = true;
+
+        // Get form elements
+        let reason = document.getElementById("reason");
+        let remarks = document.getElementById("remarks");
+        let fileUpload = document.getElementById("file_upload");
+
+        // Reset previous error messages
+        document.querySelectorAll(".error-message").forEach(msg => msg.remove());
+
+        // Check if reason is selected
+        if (reason.value === "") {
+            showError(reason, "Please select a reason.");
+            isValid = false;
+        }
+
+        // Check if remarks are provided
+        if (remarks.value.trim() === "") {
+            showError(remarks, "Please enter your remarks.");
+            isValid = false;
+        }
+
+        // Check if file is uploaded
+        if (fileUpload.files.length === 0) {
+            showError(fileUpload, "Please upload a supporting document.");
+            isValid = false;
+        }
+
+        // Prevent form submission if validation fails
+        if (!isValid) {
+            event.preventDefault();
+            return;
+        }
+
+        // If valid, submit the form
+        document.querySelector("form").submit();
+    });
+
+    function showError(element, message) {
+        let errorDiv = document.createElement("div");
+        errorDiv.className = "error-message text-danger mt-1";
+        errorDiv.innerText = message;
+        element.classList.add("is-invalid");
+        element.parentNode.appendChild(errorDiv);
+    }
+</script>
+
+{% endblock %}

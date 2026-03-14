@@ -1,0 +1,90 @@
+{% if session.get('user_id') %}
+<!-- Profile dropdown only shown when the user is logged in -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                {% if session.get('account_type') in [ 'user' , 'admin' ] %}
+    <img src="{{ url_for('static', filename='assets/logo_small.png') }}" alt="Logo" class="img-fluid" style="max-height: 50px;">
+                <li class="nav-item">
+                    <!--Bookings, USER-->
+                    <a class="nav-link" href="{{ url_for('booking') }}">Booking</a>
+                </li>
+                {% endif %}
+                {% if session.get('account_type') == 'user' %}
+                <li class="nav-item">
+                    <!--Schedule, USER VIEW-->
+                    <a class="nav-link" href="{{ url_for('calendar') }}">Schedule</a>
+                </li>
+                {% endif %}
+                <li class="nav-item">
+                    <!--FAQ, MINGYI, START-->
+                    {% if session.get('account_type') == 'admin' %}
+                <li class="d-flex navbar-nav nav-item dropdown me-2">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        FAQ
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{{ url_for('faq') }}">Manage FAQ</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('manage_contacts') }}">View FAQ Requests</a></li>
+                    </ul>
+                    {% endif %}
+                    {% if session.get('account_type') == 'user' %}
+                <li class="d-flex navbar-nav nav-item dropdown me-2">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        FAQ
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{{ url_for('faq') }}">View FAQ</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('faq_contact_us') }}">Ask a Question</a></li>
+                    </ul>
+                    <!--                FAQ, MINGYI, END-->
+                {% endif %}
+                                                    <!--TUTORIAL, CHRIS, START-->
+                {% if session.get('account_type') in ['user', 'admin'] %}
+                                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('tutorial') }}">Tutorial</a>
+                </li>
+                {% endif %}
+                <!--TUTORIAL, CHRIS, END-->
+                    {% if session.get('account_type') in ['admin'] %}
+                    <!--View Leave, for admin approval-->
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('view_leave_requests') }}">View Leave Requests</a>
+                </li>
+                {% endif %}
+                <!--Postings, ADMIN-->
+                {% if session.get('account_type') in ['admin', 'super'] %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+                </li>
+                {% endif %}
+            </ul>
+
+            <li class="d-flex navbar-nav nav-item dropdown me-2">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                   aria-expanded="false">
+                    Account
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    {% if session.get('account_type') == 'user' %}
+                    <li><a class="dropdown-item" href="{{ url_for('profile', pt_id=session['user_id']) }}">View
+                        Profile</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    {% endif %}
+                    <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
+                </ul>
+            </li>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+

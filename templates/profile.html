@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/profile.css') }}">
+    <h1 class="display-4">Welcome,  {{ pt.firstname }} {{ pt.lastname }}</h1>
+
+    <div class="card">
+        <div class="card-body">
+            <p><strong>First Name:</strong> {{ pt.firstname }}</p>
+            <p><strong>Last Name:</strong> {{ pt.lastname }}</p>
+            <p><strong>Phone Number:</strong> {{ pt.phone }}</p>
+            <p><strong>Address:</strong> {{ pt.address }}</p>
+            <p><strong>Email:</strong> {{ pt.get_email() }}</p>
+            <p><strong>Bank Account Number:</strong> {{ pt.bank[:5] }}*****</p>
+
+                <a href="{{ url_for('update_profile', pt_id=pt.get_id()) }}" class="btn btn-warning">Update Profile</a>
+    <form action="{{ url_for('deactivate_user', id=pt.get_id()) }}" method="POST">
+</form>
+
+        </div>
+    </div>
+
+{% endblock %}

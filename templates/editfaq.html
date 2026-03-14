@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="text-primary">Edit FAQ</h1>
+<form method="post">
+    <label for="question">Question:</label>
+    <input type="text" id="question" name="question" value="{{ faq.question }}" required>
+
+    <label for="answer">Answer:</label>
+    <textarea id="answer" name="answer" required>{{ faq.answer }}</textarea>
+
+    <button type="submit" class="btn btn-primary">Update</button>
+</form>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Training Videos{% endblock %}
+{% block content %}
+<div class="text-center">
+    <h1 class="display-4">Training Videos</h1>
+</div>
+<p class="fs-5">These Training videos will help you to start your jobs easier. Please watch these videos before you start working.</p>
+                                            {% if session.get('account_type') == 'admin' %}
+            <a href="{{ url_for('upload_video') }}" class="btn btn-warning">Upload Video</a>
+    {% endif %}
+<div class="container mt-4">
+    <div class="row">
+        {% for video in videos %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <video class="card-img-top" controls>
+                    <source src="{{ url_for('static', filename='videos/' + video.file_path) }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="card-body">
+                    <h5 class="card-title">{{ video.title }}</h5>
+                    <p class="card-text">{{ video.description }}</p>
+ {% if session.get('account_type') == 'admin' %}
+
+                    <a href="{{ url_for('edit_video', id=video.video_id) }}" class="btn btn-warning">Edit</a>
+
+                    <form method="POST" action="{{ url_for('delete_video', id=video.video_id) }}" style="display:inline;">
+                         <button type="submit" class="btn btn-danger">Delete</button>
+                     </form>
+{% endif %}
+
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+{% endblock %}
+
